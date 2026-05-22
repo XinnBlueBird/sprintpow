@@ -26,7 +26,7 @@ export default function KanbanBoard({ tasks, onStatusChange }: KanbanBoardProps)
   };
 
   return (
-    <div className="grid grid-cols-4 gap-3 h-full">
+    <div className="flex lg:grid lg:grid-cols-4 gap-3 h-full overflow-x-auto lg:overflow-visible pb-3 lg:pb-0">
       {columns.map((col) => {
         const columnTasks = tasks.filter((t) => t.status === col.key);
         const totalPoints = columnTasks.reduce((sum, t) => sum + t.storyPoints, 0);
@@ -34,7 +34,7 @@ export default function KanbanBoard({ tasks, onStatusChange }: KanbanBoardProps)
         return (
           <div
             key={col.key}
-            className="flex flex-col rounded-lg overflow-hidden"
+            className="flex flex-col rounded-lg overflow-hidden min-w-[240px] lg:min-w-0 flex-shrink-0 lg:flex-shrink"
             style={{ backgroundColor: "#1a1a2e" }}
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => handleDrop(e, col.key)}

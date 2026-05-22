@@ -11,6 +11,7 @@ import {
   Calendar,
   Clock,
   Gauge,
+  X,
 } from "lucide-react";
 import type { TeamCapacity } from "@/lib/types";
 import { calculateCapacity } from "@/lib/types";
@@ -18,23 +19,48 @@ import { calculateCapacity } from "@/lib/types";
 interface SidebarProps {
   capacity: TeamCapacity;
   onCapacityChange: (cap: TeamCapacity) => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export default function Sidebar({ capacity, onCapacityChange }: SidebarProps) {
+export default function Sidebar({ capacity, onCapacityChange, isOpen = true, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [isEditing, setIsEditing] = useState(false);
   const totalPoints = calculateCapacity(capacity);
 
   return (
-    <aside className="w-[280px] min-h-screen flex flex-col" style={{ backgroundColor: "#1a1a2e" }}>
+    <>
+      {/* Mobile overlay */}
+      {isOpen && onClose && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 md:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      <aside
+        className={`
+          fixed md:static inset-y-0 left-0 z-50
+          w-[280px] min-h-screen flex flex-col
+          transform transition-transform duration-200 ease-in-out
+          ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+          md:flex
+        `}
+        style={{ backgroundColor: "#1a1a2e" }}
+      >
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-[#2a2a3a]">
+      <div className="px-5 py-5 border-b border-[#2a2a3a] flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center">
             <Zap className="w-4 h-4 text-black" />
           </div>
           <span className="text-lg font-bold text-white">SprintPow</span>
         </Link>
+        {onClose && (
+          <button onClick={onClose} className="text-slate-400 hover:text-white md:hidden">
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       {/* Navigation */}
@@ -191,5 +217,6 @@ export default function Sidebar({ capacity, onCapacityChange }: SidebarProps) {
         </p>
       </div>
     </aside>
+    </>
   );
 }

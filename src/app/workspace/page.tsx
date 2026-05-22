@@ -8,6 +8,7 @@ import KanbanBoard from "@/components/KanbanBoard";
 import { useMimoAnalysis } from "@/hooks/useMimoAnalysis";
 import type { TeamCapacity, TaskItem } from "@/lib/types";
 import { generateId, parsePriority } from "@/lib/types";
+import { Menu } from "lucide-react";
 
 const defaultCapacity: TeamCapacity = {
   developers: 4,
@@ -74,6 +75,7 @@ const defaultTasks: TaskItem[] = [
 ];
 
 export default function WorkspacePage() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [capacity, setCapacity] = useState<TeamCapacity>(defaultCapacity);
   const [tasks, setTasks] = useState<TaskItem[]>(defaultTasks);
   const { isAnalyzing, thinking, analysis, error, analyze } = useMimoAnalysis();
@@ -125,32 +127,40 @@ export default function WorkspacePage() {
 
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: "#0f0f17" }}>
-      <Sidebar capacity={capacity} onCapacityChange={setCapacity} />
+      <Sidebar capacity={capacity} onCapacityChange={setCapacity} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Top Bar */}
-        <div className="px-6 py-4 border-b border-[#2a2a3a] flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-bold text-white">Sprint Workspace</h1>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Analyze backlog, estimate effort, and plan your sprint
-            </p>
+        <div className="px-4 md:px-6 py-3 md:py-4 border-b border-[#2a2a3a] flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="text-slate-400 hover:text-white md:hidden flex-shrink-0"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div className="min-w-0">
+              <h1 className="text-base md:text-lg font-bold text-white truncate">Sprint Workspace</h1>
+              <p className="text-[10px] md:text-xs text-slate-500 mt-0.5 hidden sm:block">
+                Analyze backlog, estimate effort, and plan your sprint
+              </p>
+            </div>
           </div>
           <button
             onClick={handleAddManualTask}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 border border-[#2a2a3a] hover:border-[#3a3a4a] transition-colors"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 border border-[#2a2a3a] hover:border-[#3a3a4a] transition-colors flex-shrink-0"
           >
             + Add Task
           </button>
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-4 overflow-auto">
-          <div className="grid grid-cols-12 gap-4 h-full">
+        <div className="flex-1 p-3 md:p-4 overflow-auto">
+          <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 h-full">
             {/* Left Column: Backlog Input + Analysis */}
-            <div className="col-span-4 flex flex-col gap-4">
+            <div className="flex flex-col gap-4 lg:col-span-4">
               <div
-                className="rounded-lg p-4"
+                className="rounded-lg p-3 md:p-4"
                 style={{
                   backgroundColor: "#1e1e2e",
                   border: "1px solid #2a2a3a",
@@ -170,7 +180,7 @@ export default function WorkspacePage() {
             </div>
 
             {/* Right Column: Kanban Board */}
-            <div className="col-span-8">
+            <div className="lg:col-span-8">
               <KanbanBoard tasks={tasks} onStatusChange={handleStatusChange} />
             </div>
           </div>
